@@ -1,10 +1,10 @@
 import axios from "axios";
 import { Repository } from "../interfaces/Repository";
 import { GithubUser } from "../interfaces/GithubUser";
+import { RepositoryPayload } from "../interfaces/RepositoryPayload";
 
 const GITHUB_API_URL = import.meta.env.VITE_GITHUB_API_URL || "https://api.github.com";
 const GITHUB_API_TOKEN = import.meta.env.VITE_GITHUB_API_TOKEN; 
-
 
 const apiClient = axios.create({
     baseURL: GITHUB_API_URL,
@@ -31,6 +31,16 @@ export const fetchRepositories = async () : Promise<Repository[]> => {
         return response.data as Repository[]
     } catch (error) {
         console.log("Error obteniendo repositorios", error);
+        throw new Error(`${(error as Error).message}`);
+    }
+}
+
+
+export const createRepository = async (repo: RepositoryPayload): Promise<Repository> => {
+    try {
+        const response = await apiClient.post("user/repos", repo)
+        return response.data as Repository
+    } catch (error) {
         throw new Error(`${(error as Error).message}`);
     }
 }
